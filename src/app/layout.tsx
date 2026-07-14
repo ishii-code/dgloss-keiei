@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { APP_VERSION } from "@/lib/version";
 import { OsNav } from "@/components/OsNav";
+import { AuthStatus } from "@/components/AuthStatus";
 
 export const metadata: Metadata = {
   title: "dgloss 経営 AI OS",
@@ -28,9 +29,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 </span>
               </div>
               <div className="flex items-center gap-3 text-xs text-muted">
-                <span className="inline-flex items-center gap-1 rounded-full border border-line px-2 py-1">
-                  <span className="h-1.5 w-1.5 rounded-full bg-good" />通常閲覧
-                </span>
+                <AuthStatus />
                 <span>
                   データ更新: <span className="font-medium text-ink">{DATA_UPDATED}</span>
                 </span>
