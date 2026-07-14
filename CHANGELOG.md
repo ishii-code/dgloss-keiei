@@ -1,3 +1,10 @@
+# [1.3.0](https://github.com/ishii-code/dgloss-keiei/compare/v1.2.0...v1.3.0) (2026-07-14)
+
+
+### Features
+
+* UIを shadcn/ui へ移行（見た目維持・標準準拠） ([3580e1f](https://github.com/ishii-code/dgloss-keiei/commit/3580e1f14daa0f44df1fcc0333a9d312ac05eec5))
+
 # [1.2.0](https://github.com/ishii-code/dgloss-keiei/compare/v1.1.0...v1.2.0) (2026-07-14)
 
 
