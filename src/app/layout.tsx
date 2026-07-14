@@ -28,7 +28,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                   v{APP_VERSION}
                 </span>
               </div>
-              <div className="flex items-center gap-3 text-xs text-muted">
+              <div className="flex items-center gap-3 text-xs text-muted-foreground">
                 <AuthStatus />
                 <span>
                   データ更新: <span className="font-medium text-ink">{DATA_UPDATED}</span>

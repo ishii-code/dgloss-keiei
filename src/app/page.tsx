@@ -2,12 +2,13 @@
 
 /**
  * 予実モニター（メイン）。全社と事業部別を明確に分けて表示。
- * リファレンス「経営 AI OS」の予実モニターに準拠（dgloss データ・4事業部）。
+ * トグルは shadcn Button（default/ghost）で構成。
  */
 import { useState } from "react";
 import { snapshot } from "@/data/keiei";
 import { jpy, pct } from "@/lib/format";
 import { Card } from "@/components/ui";
+import { Button } from "@/components/shadcn/button";
 import {
   achievement,
   amt,
@@ -26,34 +27,33 @@ export default function Page() {
       {/* コントロール行 */}
       <div className="flex flex-wrap items-center gap-4">
         <div className="flex items-center gap-2">
-          <span className="text-xs text-muted">対象月</span>
+          <span className="text-xs text-muted-foreground">対象月</span>
           <span className="rounded-lg border border-line bg-white px-3 py-1.5 text-sm font-semibold text-ink">
             {y.targetMonth}
           </span>
         </div>
         <div className="flex items-center gap-2">
-          <span className="text-xs text-muted">計画ソース</span>
+          <span className="text-xs text-muted-foreground">計画ソース</span>
           <div className="inline-flex rounded-lg border border-line bg-white p-0.5">
             {(["社外計画", "社内計画"] as const).map((s) => (
-              <button
+              <Button
                 key={s}
                 type="button"
+                size="sm"
+                variant={source === s ? "default" : "ghost"}
                 onClick={() => setSource(s)}
-                className={`rounded-md px-3 py-1 text-sm font-semibold transition ${
-                  source === s ? "bg-brand text-white" : "text-muted hover:text-ink"
-                }`}
               >
                 {s}
-              </button>
+              </Button>
             ))}
           </div>
         </div>
-        <span className="text-xs text-muted">計画: {y.planSource}</span>
+        <span className="text-xs text-muted-foreground">計画: {y.planSource}</span>
       </div>
 
       <div className="flex items-center gap-2">
         <h2 className="text-sm font-bold text-ink">主要指標</h2>
-        <span className="text-xs text-muted">
+        <span className="text-xs text-muted-foreground">
           {y.targetMonth} 計画 vs 見込み（{y.asOf}）
         </span>
         <span className="rounded-full bg-warn/10 px-2 py-0.5 text-[11px] font-bold text-warn">即時速報</span>
@@ -91,7 +91,7 @@ export default function Page() {
       <section className="space-y-4">
         <div>
           <h2 className="text-sm font-bold text-ink">推移とブレイクダウン</h2>
-          <p className="text-xs text-muted">FY26 通年・月次（計画 / 実績 / 見込）</p>
+          <p className="text-xs text-muted-foreground">FY26 通年・月次（計画 / 実績 / 見込）</p>
         </div>
         <div className="grid gap-6 lg:grid-cols-2">
           <Card title="全社 売上" hint="月次 計画 / 実績 / 見込">
@@ -114,7 +114,7 @@ function SectionLabel({ tone, label, note }: { tone: "brand" | "ink"; label: str
     <div className="flex items-center gap-2">
       <span className={`h-4 w-1 rounded-full ${tone === "brand" ? "bg-brand" : "bg-ink/70"}`} />
       <h3 className="text-base font-bold text-ink">{label}</h3>
-      <span className="text-xs text-muted">{note}</span>
+      <span className="text-xs text-muted-foreground">{note}</span>
     </div>
   );
 }
@@ -125,7 +125,7 @@ function CompanyCard({ label, y, tone }: { label: string; y: Yojitsu; tone: "bra
   const barPlan = y.plan > 0 ? Math.min(100, (y.actual / y.plan) * 100) : 0;
   const fcMark = y.plan > 0 ? Math.min(100, (y.forecast / y.plan) * 100) : 0;
   const accent = tone === "violet" ? "bg-violet" : "bg-brand";
-  const ratioCls = ratio === null ? "text-muted" : ratio >= 1 ? "text-good" : ratio >= 0.9 ? "text-warn" : "text-bad";
+  const ratioCls = ratio === null ? "text-muted-foreground" : ratio >= 1 ? "text-good" : ratio >= 0.9 ? "text-warn" : "text-bad";
 
   return (
     <div className={`rounded-2xl border-2 p-5 ${tone === "violet" ? "border-violet/20 bg-violet-light/50" : "border-brand/20 bg-brand-light/60"}`}>
@@ -135,15 +135,15 @@ function CompanyCard({ label, y, tone }: { label: string; y: Yojitsu; tone: "bra
           <div className="mt-1 text-4xl font-black tabular-nums text-ink">{amt(y.forecast)}</div>
         </div>
         <div className="text-right">
-          <div className="text-[11px] text-muted">達成見込み</div>
+          <div className="text-[11px] text-muted-foreground">達成見込み</div>
           <div className={`text-2xl font-black tabular-nums ${ratioCls}`}>
             {ratio === null ? "—" : pct(ratio, 1)}
           </div>
         </div>
       </div>
       <div className="mt-3 flex flex-wrap gap-x-6 gap-y-1 text-sm">
-        <span className="text-muted">計画 <span className="font-semibold text-ink">{amt(y.plan)}</span></span>
-        <span className="text-muted">実績 <span className="font-semibold text-ink">{amt(y.actual)}</span> <span className="text-xs">（対象時点累計）</span></span>
+        <span className="text-muted-foreground">計画 <span className="font-semibold text-ink">{amt(y.plan)}</span></span>
+        <span className="text-muted-foreground">実績 <span className="font-semibold text-ink">{amt(y.actual)}</span> <span className="text-xs">（対象時点累計）</span></span>
         <span className={`font-semibold ${diff < 0 ? "text-bad" : "text-good"}`}>
           差異 {diff < 0 ? "" : "+"}{amt(diff)}
         </span>

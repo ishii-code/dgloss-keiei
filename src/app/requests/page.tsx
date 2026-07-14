@@ -1,10 +1,13 @@
 "use client";
 
 /**
- * 改善リクエスト（A5）。ステータス別タブで集約・チェック。
+ * 改善リクエスト（A5）。ステータス別タブ（shadcn Tabs・下線スタイル）＋ Badge。
  */
 import { useMemo, useState } from "react";
 import { snapshot } from "@/data/keiei";
+import { cn } from "@/lib/utils";
+import { Badge } from "@/components/shadcn/badge";
+import { Tabs, TabsList, TabsTrigger } from "@/components/shadcn/tabs";
 import type { ImprovementRequest, RequestStatus } from "@/types";
 
 type Filter = "all" | RequestStatus;
@@ -43,27 +46,26 @@ export default function Page() {
       <div>
         <p className="text-xs font-semibold tracking-wide text-brand">改善リクエスト</p>
         <h1 className="mt-1 text-2xl font-bold text-ink">改善リクエスト</h1>
-        <p className="mt-0.5 text-sm text-muted">各事業部・院内アプリからの改善要望をステータス別に集約・チェック</p>
+        <p className="mt-0.5 text-sm text-muted-foreground">各事業部・院内アプリからの改善要望をステータス別に集約・チェック</p>
       </div>
 
-      {/* タブ */}
-      <div className="flex flex-wrap gap-1 border-b border-line">
-        {tabs.map((t) => (
-          <button
-            key={t.key}
-            type="button"
-            onClick={() => setFilter(t.key)}
-            className={`flex items-center gap-1.5 rounded-t-lg px-3 py-2 text-sm font-semibold transition ${
-              filter === t.key ? "border-b-2 border-brand text-brand" : "text-muted hover:text-ink"
-            }`}
-          >
-            {t.label}
-            <span className="rounded-full bg-surface px-1.5 text-[11px] tabular-nums text-muted">
-              {counts[t.key]}
-            </span>
-          </button>
-        ))}
-      </div>
+      {/* タブ（下線スタイル） */}
+      <Tabs value={filter} onValueChange={(v) => setFilter(v as Filter)}>
+        <TabsList className="h-auto w-full justify-start gap-1 rounded-none border-b border-line bg-transparent p-0">
+          {tabs.map((t) => (
+            <TabsTrigger
+              key={t.key}
+              value={t.key}
+              className="gap-1.5 rounded-none border-b-2 border-transparent px-3 py-2 text-muted-foreground shadow-none data-[state=active]:border-brand data-[state=active]:bg-transparent data-[state=active]:text-brand data-[state=active]:shadow-none"
+            >
+              {t.label}
+              <span className="rounded-full bg-surface px-1.5 text-[11px] tabular-nums text-muted-foreground">
+                {counts[t.key]}
+              </span>
+            </TabsTrigger>
+          ))}
+        </TabsList>
+      </Tabs>
 
       {/* 一覧 */}
       <ul className="space-y-2">
@@ -71,7 +73,7 @@ export default function Page() {
           <RequestRow key={r.id} req={r} />
         ))}
         {shown.length === 0 && (
-          <li className="rounded-2xl border border-line bg-white p-8 text-center text-sm text-muted">
+          <li className="rounded-2xl border border-line bg-white p-8 text-center text-sm text-muted-foreground">
             該当するリクエストはありません。
           </li>
         )}
@@ -84,10 +86,10 @@ function RequestRow({ req }: { req: ImprovementRequest }) {
   const s = STATUS_META[req.status];
   return (
     <li className="flex items-center gap-3 rounded-xl border border-line bg-white px-4 py-3 shadow-sm">
-      <span className={`shrink-0 rounded-full px-2.5 py-1 text-xs font-semibold ${s.cls}`}>{s.label}</span>
+      <Badge className={cn("shrink-0 border-transparent px-2.5 py-1 font-semibold", s.cls)}>{s.label}</Badge>
       <div className="min-w-0 flex-1">
         <div className="truncate text-sm font-medium text-ink">{req.title}</div>
-        <div className="mt-0.5 flex flex-wrap items-center gap-x-3 gap-y-0.5 text-xs text-muted">
+        <div className="mt-0.5 flex flex-wrap items-center gap-x-3 gap-y-0.5 text-xs text-muted-foreground">
           <span className="tabular-nums text-faint">{req.id}</span>
           <span>{req.source}</span>
           <span className="rounded bg-surface px-1.5 py-0.5">{req.category}</span>

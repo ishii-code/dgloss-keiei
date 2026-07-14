@@ -1,10 +1,11 @@
 /**
  * ヘッダ右の認証状態表示。
  * - 認証オフ（鍵未設定）: 「認証未設定（開発モード）」の警告チップ
- * - 認証オン: ログイン中ユーザーのメール＋サインアウト（未ログインは「ログイン」）
+ * - 認証オン: ユーザーメール＋サインアウト（未ログインは「ログイン」）
  */
 import { AUTH_ENABLED } from "@/lib/supabase/config";
 import { createClient } from "@/lib/supabase/server";
+import { Button } from "@/components/shadcn/button";
 
 export async function AuthStatus() {
   if (!AUTH_ENABLED) {
@@ -25,9 +26,9 @@ export async function AuthStatus() {
 
   if (!user) {
     return (
-      <a href="/login" className="rounded-full border border-line px-2 py-1 hover:bg-surface">
-        ログイン
-      </a>
+      <Button asChild variant="outline" size="sm" className="h-7 rounded-full">
+        <a href="/login">ログイン</a>
+      </Button>
     );
   }
 
@@ -38,9 +39,9 @@ export async function AuthStatus() {
         {user.email}
       </span>
       <form action="/auth/signout" method="post">
-        <button type="submit" className="rounded-full border border-line px-2 py-1 text-muted hover:bg-surface hover:text-ink">
+        <Button type="submit" variant="ghost" size="sm" className="h-7 rounded-full text-muted-foreground">
           サインアウト
-        </button>
+        </Button>
       </form>
     </div>
   );

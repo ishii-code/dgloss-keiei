@@ -3,6 +3,7 @@
  * KGI①②③ / メタKPI / 意思決定の権限レベル / モジュール別ステータス ＋ 日次/週次/月次の実績。
  */
 import { AuthorityBar, Card, MetaKpiCard, StatePill } from "@/components/ui";
+import { Separator } from "@/components/shadcn/separator";
 import { BusinessPerformance } from "@/components/BusinessPerformance";
 import { snapshot } from "@/data/keiei";
 import type { Kgi } from "@/types";
@@ -15,7 +16,7 @@ export default function Page() {
       <div>
         <p className="text-xs font-semibold tracking-wide text-violet">今月:現状分析</p>
         <h1 className="mt-1 text-2xl font-bold text-ink">改善エンジン & 実績内訳</h1>
-        <p className="mt-1 text-sm text-muted">{headline}</p>
+        <p className="mt-1 text-sm text-muted-foreground">{headline}</p>
       </div>
 
       {/* KGI */}
@@ -53,7 +54,7 @@ export default function Page() {
               <li key={m.name} className="flex items-center justify-between gap-3 py-3 first:pt-0 last:pb-0">
                 <div className="min-w-0">
                   <div className="truncate text-sm font-medium text-ink">{m.name}</div>
-                  <div className="truncate text-xs text-muted">{m.note}</div>
+                  <div className="truncate text-xs text-muted-foreground">{m.note}</div>
                 </div>
                 <StatePill state={m.state} />
               </li>
@@ -62,7 +63,7 @@ export default function Page() {
         </Card>
       </div>
 
-      <hr className="border-line" />
+      <Separator className="bg-line" />
 
       {/* 実績（日次/週次/月次） */}
       <BusinessPerformance performance={performance} />
@@ -84,13 +85,13 @@ function KgiCard({ kgi }: { kgi: Kgi }) {
           {kgi.index}
         </span>
         <div>
-          <div className="text-xs text-muted">
+          <div className="text-xs text-muted-foreground">
             KGI {kgi.index}（{kgi.tag}）
           </div>
           <div className="text-sm font-bold text-ink">{kgi.title}</div>
         </div>
       </div>
-      <p className="mt-3 text-xs leading-relaxed text-muted">{kgi.definition}</p>
+      <p className="mt-3 text-xs leading-relaxed text-muted-foreground">{kgi.definition}</p>
       <div className="mt-3">
         {kgi.value !== null && kgi.target !== null ? (
           <>
@@ -98,7 +99,7 @@ function KgiCard({ kgi }: { kgi: Kgi }) {
               <span className="text-3xl font-bold tabular-nums text-ink">
                 {kgi.unit === "L" ? `L${kgi.value}` : kgi.value}
               </span>
-              <span className="text-sm text-muted">
+              <span className="text-sm text-muted-foreground">
                 / {kgi.unit === "L" ? `L${kgi.target}` : `${kgi.target}`}
                 {kgi.unit && kgi.unit !== "L" ? ` ${kgi.unit}` : ""}
               </span>
@@ -116,14 +117,14 @@ function KgiCard({ kgi }: { kgi: Kgi }) {
           <div className="text-sm font-semibold text-violet">状態KGI（定性）</div>
         )}
       </div>
-      {kgi.note && <p className="mt-2 text-xs text-muted">{kgi.note}</p>}
+      {kgi.note && <p className="mt-2 text-xs text-muted-foreground">{kgi.note}</p>}
     </div>
   );
 }
 
 function AuthorityLegend() {
   return (
-    <div className="flex items-center gap-2 text-[11px] text-muted">
+    <div className="flex items-center gap-2 text-[11px] text-muted-foreground">
       <span className="inline-flex items-center gap-1">
         <span className="h-2 w-3 rounded-sm bg-slate-300" />
         L0

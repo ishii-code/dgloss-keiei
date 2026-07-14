@@ -14,6 +14,15 @@ export const SYSTEM = "dgloss-keiei";
 
 export const releases: ReleaseNote[] = [
   {
+    version: "1.2.0",
+    date: "2026-07-14",
+    features: [
+      "UIを shadcn/ui へ移行（Tailwind + shadcn/ui 標準準拠・見た目は維持）",
+      "cn/CSS変数テーマ/components.json 整備、dgloss ブランドをトークンにマッピング",
+      "Button/Card/Badge/Tabs/Table/Separator プリミティブを導入し全画面に適用",
+    ],
+  },
+  {
     version: "0.4.0",
     date: "2026-07-14",
     features: [

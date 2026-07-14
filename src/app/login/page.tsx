@@ -4,6 +4,7 @@ import { Suspense, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { ALLOWED_EMAIL_DOMAINS } from "@/lib/supabase/config";
+import { Button } from "@/components/shadcn/button";
 
 function LoginInner() {
   const params = useSearchParams();
@@ -32,22 +33,21 @@ function LoginInner() {
         dgloss
       </div>
       <div className="text-sm font-semibold text-ink">経営 AI OS</div>
-      <p className="mt-4 text-sm text-muted">社内アカウント（Google）でログインしてください。</p>
+      <p className="mt-4 text-sm text-muted-foreground">社内アカウント（Google）でログインしてください。</p>
 
-      <button
+      <Button
         type="button"
+        variant="outline"
         onClick={signInWithGoogle}
         disabled={loading}
-        className="mt-6 flex w-full items-center justify-center gap-2 rounded-lg border border-line bg-white px-4 py-2.5 text-sm font-semibold text-ink transition hover:bg-surface disabled:opacity-60"
+        className="mt-6 w-full"
       >
-        <span className="text-base">G</span>
+        <span className="text-base font-bold">G</span>
         {loading ? "リダイレクト中…" : "Google でログイン"}
-      </button>
+      </Button>
 
       {ALLOWED_EMAIL_DOMAINS.length > 0 && (
-        <p className="mt-3 text-xs text-faint">
-          許可ドメイン: {ALLOWED_EMAIL_DOMAINS.join(" / ")}
-        </p>
+        <p className="mt-3 text-xs text-faint">許可ドメイン: {ALLOWED_EMAIL_DOMAINS.join(" / ")}</p>
       )}
       {error && <p className="mt-3 text-xs text-bad">{error}</p>}
     </div>
