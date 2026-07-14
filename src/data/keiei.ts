@@ -4,7 +4,7 @@
  * 将来: 業績=会計/請求システム、改善エンジン=KPIレジストリ/Work Monitor/改善デーモン に接続して差し替える。
  * ※ 金額はすべて暫定モック。事業部は webinar deck 準拠(AIテレアポ/CG/OS/新規)。
  */
-import type { KeieiSnapshot, PeriodPerf } from "@/types";
+import type { KeieiSnapshot, PeriodPerf, YojitsuMonitor } from "@/types";
 
 /* ── 業績（A） ────────────────────────────────────────── */
 
@@ -96,10 +96,76 @@ const daily: PeriodPerf = {
 
 /* ── ルート ────────────────────────────────────────── */
 
+/* ── 予実モニター（A2）：計画 vs 実績 vs 見込み ─────────────── */
+// 円単位。全社 = 事業部合計（見込み・計画とも整合）。
+
+const yojitsu: YojitsuMonitor = {
+  targetMonth: "2026年7月 (実績+見込み)",
+  asOf: "2026-07-14 05:04時点、13日分実績/31日",
+  planSource: "事業計画 v1.4 (2026/7/14)",
+  company: {
+    revenue: { plan: 49_000_000, actual: 19_000_000, forecast: 43_000_000 },
+    profit: { plan: 20_500_000, actual: 8_000_000, forecast: 18_000_000 },
+  },
+  units: [
+    {
+      name: "AIテレアポ（D-ONE）",
+      revenue: { plan: 32_000_000, actual: 12_500_000, forecast: 28_000_000 },
+      profit: { plan: 14_500_000, actual: 5_600_000, forecast: 12_600_000 },
+    },
+    {
+      name: "カスタマーグロース（CG）",
+      revenue: { plan: 10_000_000, actual: 4_200_000, forecast: 9_500_000 },
+      profit: { plan: 4_500_000, actual: 1_900_000, forecast: 4_300_000 },
+    },
+    {
+      name: "dgloss OS ライセンス",
+      revenue: { plan: 5_000_000, actual: 1_900_000, forecast: 4_200_000 },
+      profit: { plan: 1_700_000, actual: 600_000, forecast: 1_400_000 },
+    },
+    {
+      name: "新規事業",
+      revenue: { plan: 2_000_000, actual: 600_000, forecast: 1_300_000 },
+      profit: { plan: -200_000, actual: -150_000, forecast: -300_000 },
+    },
+  ],
+  // 全社 売上 月次（3月〜2月）。過去=実績、7月=実績(部分)+見込み、未来=計画のみ。
+  revenueSeries: [
+    { label: "3月", plan: 44_000_000, actual: 39_700_000, forecast: null },
+    { label: "4月", plan: 45_000_000, actual: 41_000_000, forecast: null },
+    { label: "5月", plan: 46_000_000, actual: 43_800_000, forecast: null },
+    { label: "6月", plan: 47_000_000, actual: 39_700_000, forecast: null },
+    { label: "7月", plan: 49_000_000, actual: 19_000_000, forecast: 43_000_000 },
+    { label: "8月", plan: 50_000_000, actual: null, forecast: null },
+    { label: "9月", plan: 51_000_000, actual: null, forecast: null },
+    { label: "10月", plan: 52_000_000, actual: null, forecast: null },
+    { label: "11月", plan: 53_000_000, actual: null, forecast: null },
+    { label: "12月", plan: 54_000_000, actual: null, forecast: null },
+    { label: "1月", plan: 52_000_000, actual: null, forecast: null },
+    { label: "2月", plan: 50_000_000, actual: null, forecast: null },
+  ],
+  // 全社 営業利益 月次。
+  profitSeries: [
+    { label: "3月", plan: 18_000_000, actual: 15_900_000, forecast: null },
+    { label: "4月", plan: 18_500_000, actual: 16_400_000, forecast: null },
+    { label: "5月", plan: 19_000_000, actual: 15_600_000, forecast: null },
+    { label: "6月", plan: 19_500_000, actual: 15_400_000, forecast: null },
+    { label: "7月", plan: 20_500_000, actual: 8_000_000, forecast: 18_000_000 },
+    { label: "8月", plan: 21_000_000, actual: null, forecast: null },
+    { label: "9月", plan: 21_500_000, actual: null, forecast: null },
+    { label: "10月", plan: 22_000_000, actual: null, forecast: null },
+    { label: "11月", plan: 22_500_000, actual: null, forecast: null },
+    { label: "12月", plan: 23_000_000, actual: null, forecast: null },
+    { label: "1月", plan: 21_000_000, actual: null, forecast: null },
+    { label: "2月", plan: 20_000_000, actual: null, forecast: null },
+  ],
+};
+
 export const snapshot: KeieiSnapshot = {
   updatedAt: "2026-07-14",
   headline: "日々ドライブするのは ③AI労働力（測定可能）。②①はその延長線上。",
   performance: { daily, weekly, monthly },
+  yojitsu,
   kgis: [
     { id: "authority", index: "①", tag: "権限移譲", title: "AI経営", definition: "全意思決定の平均権限レベル", value: 1.8, target: 5, unit: "L", note: "L0 人が決める → L5 AI全権" },
     { id: "autonomy", index: "②", tag: "状態", title: "AI業務実行", definition: "全タスクの自動実行・自動改善", value: null, target: null, unit: null, note: "③の延長で到達" },

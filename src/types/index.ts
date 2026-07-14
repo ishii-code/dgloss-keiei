@@ -105,13 +105,49 @@ export interface ModuleStatus {
   state: ModuleState;
 }
 
+/* ───────────── A2) 予実モニター（計画 vs 実績 vs 見込み） ───────────── */
+
+/** 計画/実績/見込みの3値。金額は円。達成見込み% = forecast/plan、差異 = forecast - plan。 */
+export interface Yojitsu {
+  plan: number;      // 計画
+  actual: number;    // 実績（対象時点までの累計）
+  forecast: number;  // 見込み（着地）
+}
+
+/** 事業部の予実（売上・営業利益）。 */
+export interface UnitYojitsu {
+  name: string;
+  revenue: Yojitsu;
+  profit: Yojitsu;
+}
+
+/** 推移グラフの1点（計画は常時／実績は確定分／見込みは進行・着地）。 */
+export interface YojitsuPoint {
+  label: string;              // 3月, 4月, …
+  plan: number;
+  actual: number | null;      // 未確定月は null
+  forecast: number | null;    // 進行中月のみ着地見込み
+}
+
+/** 予実モニター（対象月の全社＋事業部別＋推移）。 */
+export interface YojitsuMonitor {
+  targetMonth: string;   // 例: 2026年7月 (実績+見込み)
+  asOf: string;          // 例: 2026-07-14 05:04時点、13日分実績/31日
+  planSource: string;    // 例: 事業計画 v1.4 (2026/7/14)
+  company: { revenue: Yojitsu; profit: Yojitsu };
+  units: UnitYojitsu[];
+  revenueSeries: YojitsuPoint[]; // 全社 売上 月次
+  profitSeries: YojitsuPoint[];  // 全社 営業利益 月次
+}
+
 /* ───────────── ルート ───────────── */
 
 /** 経営ダッシュボード全体のスナップショット。 */
 export interface KeieiSnapshot {
   updatedAt: string;
   headline: string;
-  performance: Performance;   // A) 業績
+  performance: Performance;   // A) 業績（日次/週次/月次の実績）
+  yojitsu: YojitsuMonitor;    // A2) 予実モニター（計画 vs 実績 vs 見込み）
   kgis: Kgi[];                // B) 改善エンジン
   metaKpis: MetaKpi[];
   authority: AuthorityRow[];
