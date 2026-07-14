@@ -4,9 +4,9 @@
   "private": true,
   "description": "dgloss OS v2.0 経営ダッシュボード — KGI・メタKPI・権限レベルの俯瞰",
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev -p 3010",
     "build": "next build",
-    "start": "next start",
+    "start": "next start -p 3010",
     "lint": "next lint",
     "typecheck": "tsc --noEmit"
   },

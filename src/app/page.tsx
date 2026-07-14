@@ -1,80 +1,93 @@
 /**
- * 経営ダッシュボード（ワイヤーフレーム section 02）。
- * KGI①②③ / メタKPI / 意思決定の権限レベル / モジュール別ステータス を俯瞰する。
+ * 経営ダッシュボード（ワイヤーフレーム section 02 を拡張）。
+ * 2本柱:
+ *  A) 業績       … 会社の売上・コストを 日次/週次/月次・事業部別で確認（BusinessPerformance）
+ *  B) 改善エンジン … 機能・オペレーション改善の元（KGI/メタKPI/権限レベル/モジュール）
  * データは src/data/keiei.ts の単一スナップショットから供給（UIにハードコードしない）。
  */
 import { AuthorityBar, Card, MetaKpiCard, StatePill } from "@/components/ui";
+import { BusinessPerformance } from "@/components/BusinessPerformance";
 import { snapshot } from "@/data/keiei";
 import type { Kgi } from "@/types";
 
 export default function Page() {
-  const { updatedAt, headline, kgis, metaKpis, authority, modules } = snapshot;
+  const { updatedAt, headline, performance, kgis, metaKpis, authority, modules } = snapshot;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       {/* ページヘッダ */}
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
           <p className="text-xs font-semibold tracking-wide text-brand">02 / 経営者視点</p>
           <h1 className="mt-1 text-2xl font-bold text-ink">経営ダッシュボード</h1>
-          <p className="mt-1 text-sm text-muted">KGI・メタKPI・権限レベルの俯瞰</p>
+          <p className="mt-1 text-sm text-muted">業績（売上・コスト）と、改善エンジン（KGI・権限レベル）を1画面で俯瞰</p>
         </div>
         <div className="text-right text-xs text-muted">
           <div>最終更新 {updatedAt}</div>
-          <div className="mt-0.5">出所: KPIレジストリ / Work Monitor（暫定モック）</div>
+          <div className="mt-0.5">出所: 会計/請求・KPIレジストリ・Work Monitor（暫定モック）</div>
         </div>
       </div>
 
-      {/* 主眼バナー */}
-      <div className="rounded-2xl border border-brand/20 bg-brand-light px-5 py-3 text-sm font-medium text-brand-dark">
-        {headline}
-      </div>
+      {/* ── A) 業績 ── */}
+      <BusinessPerformance performance={performance} />
 
-      {/* KGI ①②③ */}
-      <div className="grid gap-4 md:grid-cols-3">
-        {kgis.map((k) => (
-          <KgiCard key={k.id} kgi={k} />
-        ))}
-      </div>
+      {/* セクション区切り */}
+      <hr className="border-line" />
 
-      {/* メタKPI（日々ドライブ） */}
-      <Card title="メタKPI" hint="日々ドライブする定量指標（③AI労働力の延長で①②に波及）">
-        <div className="grid gap-4 sm:grid-cols-3">
-          {metaKpis.map((m) => (
-            <MetaKpiCard key={m.id} kpi={m} />
+      {/* ── B) 改善エンジン ── */}
+      <section className="space-y-4">
+        <div>
+          <p className="text-xs font-semibold tracking-wide text-violet">B / 改善エンジン</p>
+          <h2 className="mt-1 text-lg font-bold text-ink">機能・オペレーション改善の元</h2>
+          <p className="mt-0.5 text-sm text-muted">{headline}</p>
+        </div>
+
+        {/* KGI ①②③ */}
+        <div className="grid gap-4 md:grid-cols-3">
+          {kgis.map((k) => (
+            <KgiCard key={k.id} kgi={k} />
           ))}
         </div>
-      </Card>
 
-      {/* 権限レベル + モジュールステータス */}
-      <div className="grid gap-6 lg:grid-cols-3">
-        <div className="lg:col-span-2">
-          <Card
-            title="意思決定の権限レベル（KGI①の進捗指標）"
-            hint="L0 人が決める → L5 AI全権 ／ 不可逆な意思決定は L4 止まり"
-            action={<AuthorityLegend />}
-          >
-            <div className="space-y-4">
-              {authority.map((row) => (
-                <AuthorityBar key={row.name} row={row} />
+        {/* メタKPI */}
+        <Card title="メタKPI" hint="日々ドライブする定量指標（③AI労働力の延長で①②に波及）">
+          <div className="grid gap-4 sm:grid-cols-3">
+            {metaKpis.map((m) => (
+              <MetaKpiCard key={m.id} kpi={m} />
+            ))}
+          </div>
+        </Card>
+
+        {/* 権限レベル + モジュールステータス */}
+        <div className="grid gap-6 lg:grid-cols-3">
+          <div className="lg:col-span-2">
+            <Card
+              title="意思決定の権限レベル（KGI①の進捗指標）"
+              hint="L0 人が決める → L5 AI全権 ／ 不可逆な意思決定は L4 止まり"
+              action={<AuthorityLegend />}
+            >
+              <div className="space-y-4">
+                {authority.map((row) => (
+                  <AuthorityBar key={row.name} row={row} />
+                ))}
+              </div>
+            </Card>
+          </div>
+          <Card title="モジュール別ステータス" hint="カーネル / デーモン / 各業務モジュール">
+            <ul className="divide-y divide-line">
+              {modules.map((m) => (
+                <li key={m.name} className="flex items-center justify-between gap-3 py-3 first:pt-0 last:pb-0">
+                  <div className="min-w-0">
+                    <div className="truncate text-sm font-medium text-ink">{m.name}</div>
+                    <div className="truncate text-xs text-muted">{m.note}</div>
+                  </div>
+                  <StatePill state={m.state} />
+                </li>
               ))}
-            </div>
+            </ul>
           </Card>
         </div>
-        <Card title="モジュール別ステータス" hint="カーネル / デーモン / 各業務モジュール">
-          <ul className="divide-y divide-line">
-            {modules.map((m) => (
-              <li key={m.name} className="flex items-center justify-between gap-3 py-3 first:pt-0 last:pb-0">
-                <div className="min-w-0">
-                  <div className="truncate text-sm font-medium text-ink">{m.name}</div>
-                  <div className="truncate text-xs text-muted">{m.note}</div>
-                </div>
-                <StatePill state={m.state} />
-              </li>
-            ))}
-          </ul>
-        </Card>
-      </div>
+      </section>
     </div>
   );
 }

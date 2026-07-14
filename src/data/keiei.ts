@@ -1,76 +1,115 @@
 /**
  * 経営ダッシュボードのスナップショット（モックデータ）。
- * ワイヤーフレーム section 02 の数値をそのまま初期値として保持する。
- * 将来: KPIレジストリ（カーネル）/ Work Monitor / 改善デーモンの集計に接続して差し替える。
- * ── 数値の出所を一箇所に集約し、UI 側にハードコードしない（ドリフト防止）。
+ * 数値の出所を一箇所に集約し、UI にハードコードしない（ドリフト防止）。
+ * 将来: 業績=会計/請求システム、改善エンジン=KPIレジストリ/Work Monitor/改善デーモン に接続して差し替える。
+ * ※ 金額はすべて暫定モック。事業部は webinar deck 準拠(AIテレアポ/CG/OS/新規)。
  */
-import type { KeieiSnapshot } from "@/types";
+import type { KeieiSnapshot, PeriodPerf } from "@/types";
+
+/* ── 業績（A） ────────────────────────────────────────── */
+
+const monthly: PeriodPerf = {
+  label: "2026年7月",
+  note: "進行中（14日時点）",
+  totals: {
+    revenue: 43_000_000,
+    cost: 25_000_000,
+    target: 49_000_000,
+    revenueDelta: "+8.2%",
+    revenueTrend: "up",
+    profitDelta: "+12.4%",
+    profitTrend: "up",
+  },
+  series: [
+    { label: "2月", revenue: 31_500_000, cost: 21_800_000 },
+    { label: "3月", revenue: 34_200_000, cost: 22_600_000 },
+    { label: "4月", revenue: 36_800_000, cost: 23_400_000 },
+    { label: "5月", revenue: 39_100_000, cost: 24_100_000 },
+    { label: "6月", revenue: 39_700_000, cost: 24_300_000 },
+    { label: "7月", revenue: 43_000_000, cost: 25_000_000 },
+  ],
+  units: [
+    { name: "AIテレアポ（D-ONE）", revenue: 28_000_000, cost: 15_400_000, target: 32_000_000, delta: "+6.1%", trend: "up" },
+    { name: "カスタマーグロース（CG）", revenue: 9_500_000, cost: 5_200_000, target: 10_000_000, delta: "+11.8%", trend: "up" },
+    { name: "dgloss OS ライセンス", revenue: 4_200_000, cost: 2_800_000, target: 5_000_000, delta: "+4.0%", trend: "up" },
+    { name: "新規事業", revenue: 1_300_000, cost: 1_600_000, target: 2_000_000, delta: "-3.5%", trend: "down" },
+  ],
+};
+
+const weekly: PeriodPerf = {
+  label: "第28週",
+  note: "7/7–7/13",
+  totals: {
+    revenue: 10_130_000,
+    cost: 5_980_000,
+    target: 11_310_000,
+    revenueDelta: "+3.4%",
+    revenueTrend: "up",
+    profitDelta: "+5.0%",
+    profitTrend: "up",
+  },
+  series: [
+    { label: "第22週", revenue: 8_900_000, cost: 5_600_000 },
+    { label: "第23週", revenue: 9_100_000, cost: 5_650_000 },
+    { label: "第24週", revenue: 9_050_000, cost: 5_700_000 },
+    { label: "第25週", revenue: 9_400_000, cost: 5_780_000 },
+    { label: "第26週", revenue: 9_600_000, cost: 5_820_000 },
+    { label: "第27週", revenue: 9_800_000, cost: 5_900_000 },
+    { label: "第28週", revenue: 10_130_000, cost: 5_980_000 },
+  ],
+  units: [
+    { name: "AIテレアポ（D-ONE）", revenue: 6_600_000, cost: 3_700_000, target: 7_400_000, delta: "+2.9%", trend: "up" },
+    { name: "カスタマーグロース（CG）", revenue: 2_250_000, cost: 1_250_000, target: 2_300_000, delta: "+4.6%", trend: "up" },
+    { name: "dgloss OS ライセンス", revenue: 980_000, cost: 650_000, target: 1_150_000, delta: "+1.2%", trend: "up" },
+    { name: "新規事業", revenue: 300_000, cost: 380_000, target: 460_000, delta: "-2.1%", trend: "down" },
+  ],
+};
+
+const daily: PeriodPerf = {
+  label: "2026-07-14",
+  note: "本日（速報）",
+  totals: {
+    revenue: 2_040_000,
+    cost: 1_228_000,
+    target: 2_260_000,
+    revenueDelta: "+1.9%",
+    revenueTrend: "up",
+    profitDelta: "-0.8%",
+    profitTrend: "down",
+  },
+  series: [
+    { label: "7/8", revenue: 1_760_000, cost: 1_150_000 },
+    { label: "7/9", revenue: 1_820_000, cost: 1_170_000 },
+    { label: "7/10", revenue: 1_910_000, cost: 1_190_000 },
+    { label: "7/11", revenue: 1_680_000, cost: 1_120_000 },
+    { label: "7/12", revenue: 1_240_000, cost: 980_000 },
+    { label: "7/13", revenue: 1_150_000, cost: 940_000 },
+    { label: "7/14", revenue: 2_040_000, cost: 1_228_000 },
+  ],
+  units: [
+    { name: "AIテレアポ（D-ONE）", revenue: 1_320_000, cost: 760_000, target: 1_480_000, delta: "+2.2%", trend: "up" },
+    { name: "カスタマーグロース（CG）", revenue: 450_000, cost: 250_000, target: 460_000, delta: "+0.9%", trend: "up" },
+    { name: "dgloss OS ライセンス", revenue: 210_000, cost: 140_000, target: 230_000, delta: "0.0%", trend: "flat" },
+    { name: "新規事業", revenue: 60_000, cost: 78_000, target: 92_000, delta: "-4.0%", trend: "down" },
+  ],
+};
+
+/* ── ルート ────────────────────────────────────────── */
 
 export const snapshot: KeieiSnapshot = {
   updatedAt: "2026-07-14",
   headline: "日々ドライブするのは ③AI労働力（測定可能）。②①はその延長線上。",
+  performance: { daily, weekly, monthly },
   kgis: [
-    {
-      id: "authority",
-      index: "①",
-      tag: "権限移譲",
-      title: "AI経営",
-      definition: "全意思決定の平均権限レベル",
-      value: 1.8,
-      target: 5,
-      unit: "L",
-      note: "L0 人が決める → L5 AI全権",
-    },
-    {
-      id: "autonomy",
-      index: "②",
-      tag: "状態",
-      title: "AI業務実行",
-      definition: "全タスクの自動実行・自動改善",
-      value: null,
-      target: null,
-      unit: null,
-      note: "③の延長で到達",
-    },
-    {
-      id: "labor",
-      index: "③",
-      tag: "定量・日々ドライブ",
-      title: "AI労働力",
-      definition: "各機能で 100人月/月 を目標に AI が労働力を供給",
-      value: 27,
-      target: 100,
-      unit: "人月・月",
-    },
+    { id: "authority", index: "①", tag: "権限移譲", title: "AI経営", definition: "全意思決定の平均権限レベル", value: 1.8, target: 5, unit: "L", note: "L0 人が決める → L5 AI全権" },
+    { id: "autonomy", index: "②", tag: "状態", title: "AI業務実行", definition: "全タスクの自動実行・自動改善", value: null, target: null, unit: null, note: "③の延長で到達" },
+    { id: "labor", index: "③", tag: "定量・日々ドライブ", title: "AI労働力", definition: "各機能で 100人月/月 を目標に AI が労働力を供給", value: 27, target: 100, unit: "人月・月" },
   ],
   metaKpis: [
-    {
-      id: "automation-rate",
-      label: "自動化率",
-      definition: "人業務 → システムへの昇格割合",
-      value: "34%",
-      delta: "+3pt/週",
-      trend: "up",
-    },
-    {
-      id: "improve-speed",
-      label: "改善速度",
-      definition: "自動改善サイクル完了件数 / 週",
-      value: "12件",
-      delta: "+4件",
-      trend: "up",
-    },
-    {
-      id: "ai-labor-mm",
-      label: "AI稼働人月",
-      definition: "AI完了タスク × 人間標準時間（SOP前提）",
-      value: "27人月",
-      delta: "+2.4",
-      trend: "up",
-      breakdown: "開発14 / CS 8 / 営業3 / 他2",
-    },
+    { id: "automation-rate", label: "自動化率", definition: "人業務 → システムへの昇格割合", value: "34%", delta: "+3pt/週", trend: "up" },
+    { id: "improve-speed", label: "改善速度", definition: "自動改善サイクル完了件数 / 週", value: "12件", delta: "+4件", trend: "up" },
+    { id: "ai-labor-mm", label: "AI稼働人月", definition: "AI完了タスク × 人間標準時間（SOP前提）", value: "27人月", delta: "+2.4", trend: "up", breakdown: "開発14 / CS 8 / 営業3 / 他2" },
   ],
-  // 意思決定の権限レベル分布（KGI①の進捗指標）。dist = L0..L5 の件数。
   authority: [
     { name: "SOP改善・自動化の適用", dist: [1, 3, 6, 8, 5, 2], cap: 5 },
     { name: "KPI閾値・アラート設定", dist: [2, 4, 7, 5, 2, 0], cap: 5 },
