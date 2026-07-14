@@ -3,6 +3,7 @@ import "./globals.css";
 import { APP_VERSION } from "@/lib/version";
 import { OsNav } from "@/components/OsNav";
 import { AuthStatus } from "@/components/AuthStatus";
+import { getDashboardData } from "@/lib/repository/finance";
 
 export const metadata: Metadata = {
   title: "dgloss 経営 AI OS",
@@ -11,7 +12,9 @@ export const metadata: Metadata = {
 
 const DATA_UPDATED = "2026-07-14 05:04";
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const { requests } = await getDashboardData();
+  const openRequests = requests.filter((r) => r.status === "open").length;
   return (
     <html lang="ja">
       <body>
@@ -35,7 +38,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 </span>
               </div>
             </div>
-            <OsNav />
+            <OsNav openRequests={openRequests} />
           </header>
           <main className="mx-auto max-w-[1400px] px-6 py-6">{children}</main>
         </div>

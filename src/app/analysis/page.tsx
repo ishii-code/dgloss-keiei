@@ -5,11 +5,13 @@
 import { AuthorityBar, Card, MetaKpiCard, StatePill } from "@/components/ui";
 import { Separator } from "@/components/shadcn/separator";
 import { BusinessPerformance } from "@/components/BusinessPerformance";
-import { snapshot } from "@/data/keiei";
+import { getDashboardData } from "@/lib/repository/finance";
 import type { Kgi } from "@/types";
 
-export default function Page() {
-  const { headline, performance, kgis, metaKpis, authority, modules } = snapshot;
+export const dynamic = "force-dynamic";
+
+export default async function Page() {
+  const { headline, performance, kgis, metaKpis, authority, modules } = await getDashboardData();
 
   return (
     <div className="space-y-8">

@@ -1,0 +1,37 @@
+// 会計/請求システムを真実源とする財務データ（④実データ接続）。
+// 事業部×年度×月の 計画/実績（売上・コスト）を保持。見込みはリポジトリで算出。
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+/// 事業部マスタ。
+model BusinessUnit {
+  id        Int                @id @default(autoincrement())
+  code      String             @unique // 例: tel / cg / crm / partner
+  name      String
+  sortOrder Int                @default(0)
+  financials MonthlyFinancial[]
+}
+
+/// 事業部×年度×月 の財務（計画/実績）。会計/請求システムから取り込む。
+/// 金額は円（Int）。単月・事業部粒度では Int 上限内に収まる。
+model MonthlyFinancial {
+  id            Int          @id @default(autoincrement())
+  unit          BusinessUnit @relation(fields: [unitId], references: [id])
+  unitId        Int
+  fiscalYear    Int          // 例: 2026（FY2026）
+  month         Int          // 1..12（会計期の月＝3月開始なら 3..2 を 1..12 に対応させず実月で保持）
+  planRevenue   Int          @default(0)
+  planCost      Int          @default(0)
+  actualRevenue Int          @default(0)
+  actualCost    Int          @default(0)
+  source        String       @default("seed") // freee / bakuraku / csv / seed
+  updatedAt     DateTime     @updatedAt
+
+  @@unique([unitId, fiscalYear, month])
+}

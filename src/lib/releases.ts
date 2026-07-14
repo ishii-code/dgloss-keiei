@@ -14,6 +14,16 @@ export const SYSTEM = "dgloss-keiei";
 
 export const releases: ReleaseNote[] = [
   {
+    version: "1.3.0",
+    date: "2026-07-14",
+    features: [
+      "実データ接続の基盤を追加（会計/請求を真実源）: Prisma + Supabase(PostgreSQL)",
+      "getDashboardData()でDB→モックのフォールバック。財務(予実/事業計画)をDBから構築",
+      "会計/請求CSV取込 API(/api/import/finance) と seed を追加（freee/バクラクは同取込に接続可）",
+      "全画面をサーバー取得＋force-dynamic化（DB接続時に実データを反映）",
+    ],
+  },
+  {
     version: "1.2.0",
     date: "2026-07-14",
     features: [
