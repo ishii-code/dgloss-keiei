@@ -1,3 +1,10 @@
+# [1.2.0](https://github.com/ishii-code/dgloss-keiei/compare/v1.1.0...v1.2.0) (2026-07-14)
+
+
+### Features
+
+* Supabase Auth（Google・社内ドメイン制限）を追加 ([bd6c20a](https://github.com/ishii-code/dgloss-keiei/commit/bd6c20a68755b6739436112b9306795c58bd0d66))
+
 # [1.1.0](https://github.com/ishii-code/dgloss-keiei/compare/v1.0.0...v1.1.0) (2026-07-14)
 
 
