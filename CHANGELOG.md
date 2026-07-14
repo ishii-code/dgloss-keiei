@@ -1,3 +1,10 @@
+# [1.4.0](https://github.com/ishii-code/dgloss-keiei/compare/v1.3.0...v1.4.0) (2026-07-14)
+
+
+### Features
+
+* 実データ接続基盤（会計/請求を真実源）を追加 ([718f7e7](https://github.com/ishii-code/dgloss-keiei/commit/718f7e7074e36377f4b5e25669fd171ff7c5a0c9))
+
 # [1.3.0](https://github.com/ishii-code/dgloss-keiei/compare/v1.2.0...v1.3.0) (2026-07-14)
 
 
