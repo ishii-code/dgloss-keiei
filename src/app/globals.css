@@ -7,9 +7,10 @@
 }
 
 body {
-  background: #f6f7fb;
-  color: #1b2030;
+  background: #f8fafc; /* 面/ベース */
+  color: #1a1a1a; /* 文字（標準） */
   -webkit-font-smoothing: antialiased;
-  font-family: -apple-system, BlinkMacSystemFont, "Hiragino Kaku Gothic ProN",
-    "Noto Sans JP", "Segoe UI", Roboto, sans-serif;
+  font-family: system-ui, -apple-system, "Segoe UI", "Hiragino Sans",
+    "Noto Sans JP", sans-serif;
+  line-height: 1.6;
 }

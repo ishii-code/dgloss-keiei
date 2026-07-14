@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import "./globals.css";
+import { APP_VERSION } from "@/lib/version";
 
 export const metadata: Metadata = {
   title: "経営ダッシュボード | dgloss OS",
@@ -11,6 +12,7 @@ const NAV = [
   { href: "/", label: "経営ダッシュボード" },
   { href: "/kpi", label: "KPIレジストリ" },
   { href: "/issues", label: "Issue Board" },
+  { href: "/releases", label: "リリース" },
 ];
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -25,6 +27,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                   dgloss
                 </span>
                 <span className="text-sm font-semibold text-ink">OS 経営ダッシュボード</span>
+                <span className="rounded bg-surface px-1.5 py-0.5 text-[11px] font-medium text-muted">v{APP_VERSION}</span>
               </Link>
               <nav className="flex items-center gap-1 text-sm">
                 {NAV.map((n) => (

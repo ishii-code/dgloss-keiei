@@ -3,6 +3,7 @@
  * ワイヤーフレーム（dgloss-os）のブルー/パープル基調に統一。
  */
 import type { AuthorityRow, MetaKpi, ModuleState, Trend } from "@/types";
+export { jpy, pct } from "@/lib/format";
 
 /** カード枠。ダッシュボードの各ブロックの器。 */
 export function Card({
@@ -125,19 +126,4 @@ export function StatePill({ state }: { state: ModuleState }) {
       {label}
     </span>
   );
-}
-
-/* ── 数値フォーマッタ ───────────────────────── */
-
-/** 円を億/万で短縮表示（例: 43,000,000 → 4,300万円 / 120,000,000 → 1.2億円）。 */
-export function jpy(n: number): string {
-  const sign = n < 0 ? "−" : "";
-  const a = Math.abs(n);
-  if (a >= 100_000_000) return `${sign}${(a / 100_000_000).toFixed(1)}億円`;
-  return `${sign}${Math.round(a / 10_000).toLocaleString("ja-JP")}万円`;
-}
-
-/** 0..1 or 実比率を % 表示。 */
-export function pct(v: number, digits = 1): string {
-  return `${(v * 100).toFixed(digits)}%`;
 }
