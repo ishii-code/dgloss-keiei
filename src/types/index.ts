@@ -140,6 +140,65 @@ export interface YojitsuMonitor {
   profitSeries: YojitsuPoint[];  // 全社 営業利益 月次
 }
 
+/* ───────────── A3) 週次予実 ───────────── */
+
+/** 週次推移の1点。 */
+export interface WeeklyPoint {
+  label: string;
+  plan: number;
+  actual: number | null;
+  forecast: number | null;
+}
+
+/** 週次の1指標（売上/コスト/営業利益）。 */
+export interface WeeklyMetric {
+  y: Yojitsu;
+  series: WeeklyPoint[];
+  hasActual: boolean;
+}
+
+export interface WeeklyMonitor {
+  unit: string;
+  targetWeek: string;
+  asOf: string;
+  note: string;
+  revenue: WeeklyMetric;
+  cost: WeeklyMetric;
+  profit: WeeklyMetric;
+}
+
+/* ───────────── A4) 事業計画（FY2026〜2030） ───────────── */
+
+export type Fiscal = "FY2026" | "FY2027" | "FY2028" | "FY2029" | "FY2030";
+
+/** 事業部の年間計画（3月〜2月の12ヶ月・売上/コスト）。 */
+export interface PlanRow {
+  unit: string;
+  revenue: number[];
+  cost: number[];
+}
+
+/** 事業計画ブック。FY2026 を基準に、他FYは成長倍率で算出。 */
+export interface PlanBook {
+  months: string[];
+  fiscals: Fiscal[];
+  base: PlanRow[];
+  growth: Record<Fiscal, number>;
+}
+
+/* ───────────── A5) 改善リクエスト ───────────── */
+
+export type RequestStatus = "open" | "in_progress" | "done";
+
+export interface ImprovementRequest {
+  id: string;
+  title: string;
+  source: string;
+  category: string;
+  status: RequestStatus;
+  date: string;
+}
+
 /* ───────────── ルート ───────────── */
 
 /** 経営ダッシュボード全体のスナップショット。 */
@@ -147,7 +206,10 @@ export interface KeieiSnapshot {
   updatedAt: string;
   headline: string;
   performance: Performance;   // A) 業績（日次/週次/月次の実績）
-  yojitsu: YojitsuMonitor;    // A2) 予実モニター（計画 vs 実績 vs 見込み）
+  yojitsu: YojitsuMonitor;    // A2) 予実モニター（月次・計画 vs 実績 vs 見込み）
+  weekly: WeeklyMonitor;      // A3) 週次予実
+  plan: PlanBook;             // A4) 事業計画（FY2026〜2030）
+  requests: ImprovementRequest[]; // A5) 改善リクエスト
   kgis: Kgi[];                // B) 改善エンジン
   metaKpis: MetaKpi[];
   authority: AuthorityRow[];

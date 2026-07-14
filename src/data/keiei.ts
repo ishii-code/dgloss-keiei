@@ -1,12 +1,26 @@
 /**
- * 経営ダッシュボードのスナップショット（モックデータ）。
+ * 経営ダッシュボードのスナップショット（暫定モック）。
  * 数値の出所を一箇所に集約し、UI にハードコードしない（ドリフト防止）。
- * 将来: 業績=会計/請求システム、改善エンジン=KPIレジストリ/Work Monitor/改善デーモン に接続して差し替える。
- * ※ 金額はすべて暫定モック。事業部は webinar deck 準拠(AIテレアポ/CG/OS/新規)。
+ * 事業部 = パートナー事業部 / CRM事業部 / AIテレアポ事業部 / カスタマーグロース部。
+ * 全社 = 4事業部の合計（売上・コスト・計画・見込みとも整合）。
+ * 将来: 業績=会計/請求、改善エンジン=KPIレジストリ/Work Monitor に接続して差し替える。
  */
-import type { KeieiSnapshot, PeriodPerf, YojitsuMonitor } from "@/types";
+import type {
+  ImprovementRequest,
+  KeieiSnapshot,
+  PeriodPerf,
+  PlanBook,
+  WeeklyMonitor,
+  YojitsuMonitor,
+} from "@/types";
 
-/* ── 業績（A） ────────────────────────────────────────── */
+/* 事業部名（順序＝規模大→小） */
+const U_TEL = "AIテレアポ事業部";
+const U_CG = "カスタマーグロース部";
+const U_CRM = "CRM事業部";
+const U_PARTNER = "パートナー事業部";
+
+/* ── 実績（A）：日次/週次/月次 ─────────────────────────── */
 
 const monthly: PeriodPerf = {
   label: "2026年7月",
@@ -29,14 +43,14 @@ const monthly: PeriodPerf = {
     { label: "7月", revenue: 43_000_000, cost: 25_000_000 },
   ],
   units: [
-    { name: "AIテレアポ（D-ONE）", revenue: 28_000_000, cost: 15_400_000, target: 32_000_000, delta: "+6.1%", trend: "up" },
-    { name: "カスタマーグロース（CG）", revenue: 9_500_000, cost: 5_200_000, target: 10_000_000, delta: "+11.8%", trend: "up" },
-    { name: "dgloss OS ライセンス", revenue: 4_200_000, cost: 2_800_000, target: 5_000_000, delta: "+4.0%", trend: "up" },
-    { name: "新規事業", revenue: 1_300_000, cost: 1_600_000, target: 2_000_000, delta: "-3.5%", trend: "down" },
+    { name: U_TEL, revenue: 24_000_000, cost: 13_000_000, target: 27_000_000, delta: "+6.1%", trend: "up" },
+    { name: U_CG, revenue: 9_000_000, cost: 4_800_000, target: 9_500_000, delta: "+11.8%", trend: "up" },
+    { name: U_CRM, revenue: 7_000_000, cost: 3_700_000, target: 8_000_000, delta: "+5.0%", trend: "up" },
+    { name: U_PARTNER, revenue: 3_000_000, cost: 3_500_000, target: 4_500_000, delta: "-3.5%", trend: "down" },
   ],
 };
 
-const weekly: PeriodPerf = {
+const weeklyPerf: PeriodPerf = {
   label: "第28週",
   note: "7/7–7/13",
   totals: {
@@ -58,10 +72,10 @@ const weekly: PeriodPerf = {
     { label: "第28週", revenue: 10_130_000, cost: 5_980_000 },
   ],
   units: [
-    { name: "AIテレアポ（D-ONE）", revenue: 6_600_000, cost: 3_700_000, target: 7_400_000, delta: "+2.9%", trend: "up" },
-    { name: "カスタマーグロース（CG）", revenue: 2_250_000, cost: 1_250_000, target: 2_300_000, delta: "+4.6%", trend: "up" },
-    { name: "dgloss OS ライセンス", revenue: 980_000, cost: 650_000, target: 1_150_000, delta: "+1.2%", trend: "up" },
-    { name: "新規事業", revenue: 300_000, cost: 380_000, target: 460_000, delta: "-2.1%", trend: "down" },
+    { name: U_TEL, revenue: 5_650_000, cost: 3_050_000, target: 6_300_000, delta: "+2.9%", trend: "up" },
+    { name: U_CG, revenue: 2_120_000, cost: 1_130_000, target: 2_230_000, delta: "+4.6%", trend: "up" },
+    { name: U_CRM, revenue: 1_650_000, cost: 870_000, target: 1_850_000, delta: "+1.2%", trend: "up" },
+    { name: U_PARTNER, revenue: 710_000, cost: 930_000, target: 930_000, delta: "-2.1%", trend: "down" },
   ],
 };
 
@@ -87,17 +101,14 @@ const daily: PeriodPerf = {
     { label: "7/14", revenue: 2_040_000, cost: 1_228_000 },
   ],
   units: [
-    { name: "AIテレアポ（D-ONE）", revenue: 1_320_000, cost: 760_000, target: 1_480_000, delta: "+2.2%", trend: "up" },
-    { name: "カスタマーグロース（CG）", revenue: 450_000, cost: 250_000, target: 460_000, delta: "+0.9%", trend: "up" },
-    { name: "dgloss OS ライセンス", revenue: 210_000, cost: 140_000, target: 230_000, delta: "0.0%", trend: "flat" },
-    { name: "新規事業", revenue: 60_000, cost: 78_000, target: 92_000, delta: "-4.0%", trend: "down" },
+    { name: U_TEL, revenue: 1_140_000, cost: 615_000, target: 1_270_000, delta: "+2.2%", trend: "up" },
+    { name: U_CG, revenue: 430_000, cost: 228_000, target: 460_000, delta: "+0.9%", trend: "up" },
+    { name: U_CRM, revenue: 330_000, cost: 175_000, target: 380_000, delta: "0.0%", trend: "flat" },
+    { name: U_PARTNER, revenue: 140_000, cost: 210_000, target: 150_000, delta: "-4.0%", trend: "down" },
   ],
 };
 
-/* ── ルート ────────────────────────────────────────── */
-
-/* ── 予実モニター（A2）：計画 vs 実績 vs 見込み ─────────────── */
-// 円単位。全社 = 事業部合計（見込み・計画とも整合）。
+/* ── 予実モニター（A2・月次） ─────────────────────────── */
 
 const yojitsu: YojitsuMonitor = {
   targetMonth: "2026年7月 (実績+見込み)",
@@ -109,27 +120,26 @@ const yojitsu: YojitsuMonitor = {
   },
   units: [
     {
-      name: "AIテレアポ（D-ONE）",
-      revenue: { plan: 32_000_000, actual: 12_500_000, forecast: 28_000_000 },
-      profit: { plan: 14_500_000, actual: 5_600_000, forecast: 12_600_000 },
+      name: U_TEL,
+      revenue: { plan: 27_000_000, actual: 10_600_000, forecast: 24_000_000 },
+      profit: { plan: 12_500_000, actual: 4_900_000, forecast: 11_000_000 },
     },
     {
-      name: "カスタマーグロース（CG）",
-      revenue: { plan: 10_000_000, actual: 4_200_000, forecast: 9_500_000 },
-      profit: { plan: 4_500_000, actual: 1_900_000, forecast: 4_300_000 },
+      name: U_CG,
+      revenue: { plan: 9_500_000, actual: 4_000_000, forecast: 9_000_000 },
+      profit: { plan: 4_500_000, actual: 1_850_000, forecast: 4_200_000 },
     },
     {
-      name: "dgloss OS ライセンス",
-      revenue: { plan: 5_000_000, actual: 1_900_000, forecast: 4_200_000 },
-      profit: { plan: 1_700_000, actual: 600_000, forecast: 1_400_000 },
+      name: U_CRM,
+      revenue: { plan: 8_000_000, actual: 3_100_000, forecast: 7_000_000 },
+      profit: { plan: 3_800_000, actual: 1_450_000, forecast: 3_300_000 },
     },
     {
-      name: "新規事業",
-      revenue: { plan: 2_000_000, actual: 600_000, forecast: 1_300_000 },
-      profit: { plan: -200_000, actual: -150_000, forecast: -300_000 },
+      name: U_PARTNER,
+      revenue: { plan: 4_500_000, actual: 1_300_000, forecast: 3_000_000 },
+      profit: { plan: -300_000, actual: -200_000, forecast: -500_000 },
     },
   ],
-  // 全社 売上 月次（3月〜2月）。過去=実績、7月=実績(部分)+見込み、未来=計画のみ。
   revenueSeries: [
     { label: "3月", plan: 44_000_000, actual: 39_700_000, forecast: null },
     { label: "4月", plan: 45_000_000, actual: 41_000_000, forecast: null },
@@ -144,7 +154,6 @@ const yojitsu: YojitsuMonitor = {
     { label: "1月", plan: 52_000_000, actual: null, forecast: null },
     { label: "2月", plan: 50_000_000, actual: null, forecast: null },
   ],
-  // 全社 営業利益 月次。
   profitSeries: [
     { label: "3月", plan: 18_000_000, actual: 15_900_000, forecast: null },
     { label: "4月", plan: 18_500_000, actual: 16_400_000, forecast: null },
@@ -161,11 +170,95 @@ const yojitsu: YojitsuMonitor = {
   ],
 };
 
+/* ── 週次予実（A3） ───────────────────────────────────── */
+// 木〜水を1週サイクル。売上=週次実績あり／コスト・営業利益=週次実績なし（計画・見込のみ）。
+
+const weekly: WeeklyMonitor = {
+  unit: "全社",
+  targetWeek: "2W（7/9(木)–7/15(水)・7日）進行中",
+  asOf: "2026-07-14 05:04時点、6日分実績/7日",
+  note: "進行中（週末見込み）",
+  revenue: {
+    y: { plan: 11_310_000, actual: 6_850_000, forecast: 10_130_000 },
+    hasActual: true,
+    series: [
+      { label: "1W", plan: 11_800_000, actual: 9_880_000, forecast: 9_880_000 },
+      { label: "2W", plan: 11_310_000, actual: 6_850_000, forecast: 10_130_000 },
+      { label: "3W", plan: 11_200_000, actual: null, forecast: null },
+      { label: "4W", plan: 11_600_000, actual: null, forecast: null },
+      { label: "5W", plan: 5_400_000, actual: null, forecast: null },
+    ],
+  },
+  cost: {
+    y: { plan: 6_600_000, actual: 0, forecast: 6_750_000 },
+    hasActual: false,
+    series: [
+      { label: "1W", plan: 6_500_000, actual: null, forecast: 6_600_000 },
+      { label: "2W", plan: 6_600_000, actual: null, forecast: 6_750_000 },
+      { label: "3W", plan: 6_400_000, actual: null, forecast: 6_400_000 },
+      { label: "4W", plan: 6_700_000, actual: null, forecast: 6_700_000 },
+      { label: "5W", plan: 3_100_000, actual: null, forecast: 3_100_000 },
+    ],
+  },
+  profit: {
+    y: { plan: 4_710_000, actual: 0, forecast: 3_380_000 },
+    hasActual: false,
+    series: [
+      { label: "1W", plan: 5_300_000, actual: null, forecast: 3_280_000 },
+      { label: "2W", plan: 4_710_000, actual: null, forecast: 3_380_000 },
+      { label: "3W", plan: 4_800_000, actual: null, forecast: 4_800_000 },
+      { label: "4W", plan: 4_900_000, actual: null, forecast: 4_900_000 },
+      { label: "5W", plan: 2_300_000, actual: null, forecast: 2_300_000 },
+    ],
+  },
+};
+
+/* ── 事業計画（A4・FY2026基準／他FYは倍率） ─────────────── */
+// 12ヶ月（3月〜2月）。FY2026 を実数、FY2027〜2030 は growth 倍率でページ側が算出。
+
+const M = (base: number, shape: number[]): number[] => shape.map((s) => Math.round((base * s) / 100));
+// 月次の季節配分（合計 ≒ base）。合計100。
+const SHAPE = [7, 8, 8, 8, 9, 9, 9, 9, 8, 9, 8, 8];
+
+const plan: PlanBook = {
+  months: ["3月", "4月", "5月", "6月", "7月", "8月", "9月", "10月", "11月", "12月", "1月", "2月"],
+  fiscals: ["FY2026", "FY2027", "FY2028", "FY2029", "FY2030"],
+  base: [
+    { unit: U_TEL, revenue: M(324_000_000, SHAPE), cost: M(168_000_000, SHAPE) },
+    { unit: U_CG, revenue: M(114_000_000, SHAPE), cost: M(60_000_000, SHAPE) },
+    { unit: U_CRM, revenue: M(96_000_000, SHAPE), cost: M(51_000_000, SHAPE) },
+    { unit: U_PARTNER, revenue: M(54_000_000, SHAPE), cost: M(66_000_000, SHAPE) },
+  ],
+  growth: { FY2026: 1.0, FY2027: 1.6, FY2028: 2.4, FY2029: 3.4, FY2030: 4.6 },
+};
+
+/* ── 改善リクエスト（A5） ─────────────────────────────── */
+
+const requests: ImprovementRequest[] = [
+  { id: "REQ-142", title: "予実モニターに前年同月比を追加したい", source: "AIテレアポ事業部", category: "データ", status: "open", date: "2026-07-14" },
+  { id: "REQ-141", title: "事業部別テーブルをCSVエクスポートしたい", source: "コーポレート", category: "データ", status: "open", date: "2026-07-13" },
+  { id: "REQ-140", title: "週次予実のコスト実績を日次から自動集計", source: "CRM事業部", category: "自動化", status: "in_progress", date: "2026-07-13" },
+  { id: "REQ-139", title: "改善リクエストにSLA（対応期限）を表示", source: "カスタマーグロース部", category: "UI", status: "open", date: "2026-07-12" },
+  { id: "REQ-138", title: "パートナー事業部の原価按分ロジックを見直し", source: "パートナー事業部", category: "データ", status: "in_progress", date: "2026-07-11" },
+  { id: "REQ-137", title: "達成見込み%の色しきい値を部門別に設定", source: "経営", category: "UI", status: "open", date: "2026-07-11" },
+  { id: "REQ-136", title: "取締役会資料タブのPDF出力", source: "コーポレート", category: "自動化", status: "open", date: "2026-07-10" },
+  { id: "REQ-135", title: "モバイル表示でカードが崩れる", source: "AIテレアポ事業部", category: "不具合", status: "open", date: "2026-07-10" },
+  { id: "REQ-134", title: "KPIレジストリと予実の数値差異アラート", source: "経営", category: "自動化", status: "in_progress", date: "2026-07-09" },
+  { id: "REQ-133", title: "事業計画の月次を四半期表示に切替", source: "コーポレート", category: "UI", status: "done", date: "2026-07-08" },
+  { id: "REQ-132", title: "見込みの算出根拠をツールチップ表示", source: "カスタマーグロース部", category: "UI", status: "done", date: "2026-07-07" },
+  { id: "REQ-131", title: "権限管理：閲覧専用ロールの追加", source: "経営", category: "自動化", status: "done", date: "2026-07-06" },
+];
+
+/* ── ルート ────────────────────────────────────────── */
+
 export const snapshot: KeieiSnapshot = {
   updatedAt: "2026-07-14",
   headline: "日々ドライブするのは ③AI労働力（測定可能）。②①はその延長線上。",
-  performance: { daily, weekly, monthly },
+  performance: { daily, weekly: weeklyPerf, monthly },
   yojitsu,
+  weekly,
+  plan,
+  requests,
   kgis: [
     { id: "authority", index: "①", tag: "権限移譲", title: "AI経営", definition: "全意思決定の平均権限レベル", value: 1.8, target: 5, unit: "L", note: "L0 人が決める → L5 AI全権" },
     { id: "autonomy", index: "②", tag: "状態", title: "AI業務実行", definition: "全タスクの自動実行・自動改善", value: null, target: null, unit: null, note: "③の延長で到達" },

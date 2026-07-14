@@ -2,6 +2,9 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { snapshot } from "@/data/keiei";
+
+const OPEN_REQUESTS = snapshot.requests.filter((r) => r.status === "open").length;
 
 const TABS = [
   { href: "/", label: "予実モニター", freq: "毎日更新" },
@@ -9,7 +12,7 @@ const TABS = [
   { href: "/analysis", label: "今月:現状分析", freq: "月次更新" },
   { href: "/planning", label: "事業計画", freq: "手動更新" },
   { href: "/releases", label: "リリースノート", freq: "都度更新" },
-  { href: "/requests", label: "改善リクエスト", freq: "都度更新", badge: 29 },
+  { href: "/requests", label: "改善リクエスト", freq: "都度更新", badge: OPEN_REQUESTS },
 ];
 
 export function OsNav() {
