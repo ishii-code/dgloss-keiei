@@ -1,3 +1,10 @@
+# [1.5.0](https://github.com/ishii-code/dgloss-keiei/compare/v1.4.0...v1.5.0) (2026-07-15)
+
+
+### Features
+
+* 請求書システム(Googleスプレッドシート)連携で請求売上を同期 ([2a7c584](https://github.com/ishii-code/dgloss-keiei/commit/2a7c58427a99229dfb6939e799ca91f132841fa8))
+
 # [1.4.0](https://github.com/ishii-code/dgloss-keiei/compare/v1.3.0...v1.4.0) (2026-07-14)
 
 
