@@ -1,3 +1,10 @@
+# [1.8.0](https://github.com/ishii-code/dgloss-keiei/compare/v1.7.1...v1.8.0) (2026-07-15)
+
+
+### Features
+
+* ログインをメールOTP(マジックリンク)に変更(Google/GCP不要) ([f3b6023](https://github.com/ishii-code/dgloss-keiei/commit/f3b6023821f63d601662a543241caf0c1ef1dd35))
+
 ## [1.7.1](https://github.com/ishii-code/dgloss-keiei/compare/v1.7.0...v1.7.1) (2026-07-15)
 
 
