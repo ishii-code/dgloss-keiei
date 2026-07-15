@@ -98,22 +98,28 @@ function buildPlan(rows: UnitRow[]): PlanBook {
 export const getDashboardData = cache(async (): Promise<KeieiSnapshot> => {
   if (!DB_ENABLED || !prisma) return snapshot;
 
-  const units = await prisma.businessUnit.findMany({
-    orderBy: { sortOrder: "asc" },
-    include: { financials: { where: { fiscalYear: CURRENT_FY } } },
-  });
-  if (units.length === 0) return snapshot; // 未seed
+  try {
+    const units = await prisma.businessUnit.findMany({
+      orderBy: { sortOrder: "asc" },
+      include: { financials: { where: { fiscalYear: CURRENT_FY } } },
+    });
+    if (units.length === 0) return snapshot; // 未seed
 
-  const rows: UnitRow[] = units.map((u) => ({
-    name: u.name,
-    fins: u.financials.map((f) => ({
-      month: f.month,
-      planRevenue: f.planRevenue,
-      planCost: f.planCost,
-      actualRevenue: f.actualRevenue,
-      actualCost: f.actualCost,
-    })),
-  }));
+    const rows: UnitRow[] = units.map((u) => ({
+      name: u.name,
+      fins: u.financials.map((f) => ({
+        month: f.month,
+        planRevenue: f.planRevenue,
+        planCost: f.planCost,
+        actualRevenue: f.actualRevenue,
+        actualCost: f.actualCost,
+      })),
+    }));
 
-  return { ...snapshot, yojitsu: buildYojitsu(rows), plan: buildPlan(rows) };
+    return { ...snapshot, yojitsu: buildYojitsu(rows), plan: buildPlan(rows) };
+  } catch (e) {
+    // DB 接続失敗時はクラッシュさせずモックへフォールバック。
+    console.error("[getDashboardData] DB読取失敗、モックにフォールバック:", e);
+    return snapshot;
+  }
 });
