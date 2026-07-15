@@ -1,3 +1,10 @@
+# [1.6.0](https://github.com/ishii-code/dgloss-keiei/compare/v1.5.0...v1.6.0) (2026-07-15)
+
+
+### Features
+
+* 請求先コード→事業部の実マッピングを反映(DG/CRM/AT・C2) ([0e01249](https://github.com/ishii-code/dgloss-keiei/commit/0e01249a0c857fe01481cc1e6fa1e971ff97523e))
+
 # [1.5.0](https://github.com/ishii-code/dgloss-keiei/compare/v1.4.0...v1.5.0) (2026-07-15)
 
 
