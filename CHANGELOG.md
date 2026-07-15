@@ -1,3 +1,10 @@
+## [1.7.1](https://github.com/ishii-code/dgloss-keiei/compare/v1.7.0...v1.7.1) (2026-07-15)
+
+
+### Bug Fixes
+
+* DB接続失敗時はモックへフォールバック(getDashboardData) ([b4a7492](https://github.com/ishii-code/dgloss-keiei/commit/b4a74922e88171baf3595a42a81e4f0611accef5))
+
 # [1.7.0](https://github.com/ishii-code/dgloss-keiei/compare/v1.6.0...v1.7.0) (2026-07-15)
 
 
