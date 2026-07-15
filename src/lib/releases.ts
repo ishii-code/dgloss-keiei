@@ -14,6 +14,16 @@ export const SYSTEM = "dgloss-keiei";
 
 export const releases: ReleaseNote[] = [
   {
+    version: "1.4.0",
+    date: "2026-07-15",
+    features: [
+      "請求書システム(Googleスプレッドシート)連携: 請求売上を経営ダッシュボードへ同期",
+      "Google Sheets API(サービスアカウント)でinvoicesを読み、請求先コード→事業部で集計",
+      "同期API /api/sync/billing で MonthlyFinancial.actualRevenue へupsert(コスト/計画は別ソース)",
+      "請求先コード→事業部マップ src/lib/config/clientUnitMap.ts を新設",
+    ],
+  },
+  {
     version: "1.3.0",
     date: "2026-07-14",
     features: [

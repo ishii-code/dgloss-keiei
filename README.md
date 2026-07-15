@@ -54,6 +54,20 @@ pnpm build
    freee / バクラク等の API 連携も、正規化して同じ upsert（`/api/import/finance` 相当）に流す形で追加可能。
 4. 見込み（forecast）はリポジトリで算出（実績 + 残計画の按分）。
 
+### 請求書システム（Google スプレッドシート）連携 — 請求売上の自動同期
+請求管理は GAS 製「ディグロス請求書システム」（スプレッドシート: `master`/`invoices`/`items`）で運用。
+その `invoices`（`clientCode`/`subtotal`/`targetMonthStr`）を **Google Sheets API（サービスアカウント）** で読み、
+**請求先コード→事業部** で集計して `MonthlyFinancial.actualRevenue`（請求売上）へ同期する。
+```
+1) 請求先コード→事業部 を src/lib/config/clientUnitMap.ts に定義（tel/cg/crm/partner）
+2) サービスアカウントを作成し、スプレッドシートを「閲覧」で共有
+3) .env に GOOGLE_SHEETS_SPREADSHEET_ID / GOOGLE_SERVICE_ACCOUNT_KEY（JSON or base64）
+4) 同期実行: curl -X POST http://localhost:3010/api/sync/billing
+   → invoices を集計し actualRevenue を upsert（本番は Vercel Cron で定期実行）
+```
+- 供給するのは **請求売上（actualRevenue）** のみ。コスト＝会計（freee/バクラク）、計画＝事業計画。
+- 入金/資金繰り（`paidDate`/`status`）は請求システム側の「資金予測ダッシュボード」が既存。将来この OS へ統合可。
+
 ## 認証
 `NEXT_PUBLIC_SUPABASE_URL` / `NEXT_PUBLIC_SUPABASE_ANON_KEY` 設定で有効化。
 `ALLOWED_EMAIL_DOMAINS` で社内ドメイン制限。未設定なら開発モード（認証オフ・ヘッダに警告）。
