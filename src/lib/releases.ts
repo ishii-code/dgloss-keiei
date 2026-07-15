@@ -14,6 +14,15 @@ export const SYSTEM = "dgloss-keiei";
 
 export const releases: ReleaseNote[] = [
   {
+    version: "1.5.0",
+    date: "2026-07-15",
+    features: [
+      "カスタマーグロース部を活動KPIとして分離表示(売上はAIテレアポに内包)",
+      "予実の売上/利益は3事業部(AIテレアポ/CRM/パートナー)に、cgはNRR/対応社数/解約率等のKPIで可視化",
+      "cgの売上・コストをAIテレアポに集約(全社合計は不変)",
+    ],
+  },
+  {
     version: "1.4.0",
     date: "2026-07-15",
     features: [

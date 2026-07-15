@@ -7,5 +7,5 @@ export const dynamic = "force-dynamic";
 
 export default async function Page() {
   const data = await getDashboardData();
-  return <YojitsuMonitor y={data.yojitsu} />;
+  return <YojitsuMonitor y={data.yojitsu} cgKpi={data.cgKpi} />;
 }

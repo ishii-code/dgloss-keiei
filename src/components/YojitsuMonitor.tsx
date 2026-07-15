@@ -3,12 +3,12 @@
 /** 予実モニター表示（全社/事業部別）。データはサーバーから props で受け取る。 */
 import { useState } from "react";
 import { jpy, pct } from "@/lib/format";
-import { Card } from "@/components/ui";
+import { Card, DeltaBadge } from "@/components/ui";
 import { Button } from "@/components/shadcn/button";
 import { achievement, amt, UnitYojitsuTable, YojitsuBarChart, YojitsuCard } from "@/components/yojitsu";
-import type { Yojitsu, YojitsuMonitor as YM } from "@/types";
+import type { CgKpi, Yojitsu, YojitsuMonitor as YM } from "@/types";
 
-export function YojitsuMonitor({ y }: { y: YM }) {
+export function YojitsuMonitor({ y, cgKpi }: { y: YM; cgKpi: CgKpi }) {
   const [source, setSource] = useState<"社内計画" | "社外計画">("社内計画");
 
   return (
@@ -50,7 +50,7 @@ export function YojitsuMonitor({ y }: { y: YM }) {
       </section>
 
       <section>
-        <SectionLabel tone="ink" label="事業部別" note={`${y.units.length}事業部`} />
+        <SectionLabel tone="ink" label="事業部別" note={`${y.units.length}事業部（売上/利益）`} />
         <div className="mb-2 mt-3 text-xs font-semibold text-faint">売上</div>
         <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
           {y.units.map((u) => (
@@ -61,6 +61,22 @@ export function YojitsuMonitor({ y }: { y: YM }) {
         <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
           {y.units.map((u) => (
             <YojitsuCard key={u.name} label={u.name} y={u.profit} tone="violet" />
+          ))}
+        </div>
+      </section>
+
+      {/* ── カスタマーグロース部（活動KPI・売上はAIテレアポ内包） ── */}
+      <section>
+        <SectionLabel tone="brand" label="カスタマーグロース部" note={cgKpi.note} />
+        <div className="mt-2 grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+          {cgKpi.metrics.map((m) => (
+            <div key={m.label} className="rounded-2xl border border-line bg-white p-4 shadow-sm">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-semibold text-muted-foreground">{m.label}</span>
+                {m.delta && m.trend && <DeltaBadge delta={m.delta} trend={m.trend} />}
+              </div>
+              <div className="mt-2 text-2xl font-bold tabular-nums text-ink">{m.value}</div>
+            </div>
           ))}
         </div>
       </section>

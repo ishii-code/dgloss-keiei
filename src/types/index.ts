@@ -199,6 +199,22 @@ export interface ImprovementRequest {
   date: string;
 }
 
+/* ───────────── A6) カスタマーグロース部 活動KPI ───────────── */
+// cg は AIテレアポ既存顧客のサポート部門。請求売上は AIテレアポに内包されるため、
+// 予実(売上/利益)ではなく活動KPI（NRR/対応社数/解約防止 等）で可視化する。
+
+export interface CgMetric {
+  label: string;
+  value: string;
+  delta?: string;
+  trend?: Trend;
+}
+
+export interface CgKpi {
+  note: string;        // 例: 売上はAIテレアポに内包
+  metrics: CgMetric[];
+}
+
 /* ───────────── ルート ───────────── */
 
 /** 経営ダッシュボード全体のスナップショット。 */
@@ -210,6 +226,7 @@ export interface KeieiSnapshot {
   weekly: WeeklyMonitor;      // A3) 週次予実
   plan: PlanBook;             // A4) 事業計画（FY2026〜2030）
   requests: ImprovementRequest[]; // A5) 改善リクエスト
+  cgKpi: CgKpi;               // A6) カスタマーグロース部 活動KPI（売上はAIテレアポ内包）
   kgis: Kgi[];                // B) 改善エンジン
   metaKpis: MetaKpi[];
   authority: AuthorityRow[];

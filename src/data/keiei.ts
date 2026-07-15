@@ -1,9 +1,9 @@
 /**
  * 経営ダッシュボードのスナップショット（暫定モック）。
- * 数値の出所を一箇所に集約し、UI にハードコードしない（ドリフト防止）。
- * 事業部 = パートナー事業部 / CRM事業部 / AIテレアポ事業部 / カスタマーグロース部。
- * 全社 = 4事業部の合計（売上・コスト・計画・見込みとも整合）。
- * 将来: 業績=会計/請求、改善エンジン=KPIレジストリ/Work Monitor に接続して差し替える。
+ * 事業部（売上/利益の予実対象）= AIテレアポ事業部 / CRM事業部 / パートナー事業部 の3つ。
+ * カスタマーグロース部(cg) は AIテレアポ既存顧客のサポート部門で請求売上は AIテレアポに内包
+ *   → 売上/利益の予実には出さず、活動KPI(cgKpi)で可視化する。財務は AIテレアポに集約。
+ * 全社 = 3事業部の合計。将来: 売上=請求書システム(Sheets)、コスト=会計、計画=事業計画 で差し替え。
  */
 import type {
   ImprovementRequest,
@@ -12,11 +12,10 @@ import type {
   PlanBook,
   WeeklyMonitor,
   YojitsuMonitor,
+  CgKpi,
 } from "@/types";
 
-/* 事業部名（順序＝規模大→小） */
-const U_TEL = "AIテレアポ事業部";
-const U_CG = "カスタマーグロース部";
+const U_TEL = "AIテレアポ事業部"; // カスタマーグロース部の売上・コストを内包
 const U_CRM = "CRM事業部";
 const U_PARTNER = "パートナー事業部";
 
@@ -25,15 +24,7 @@ const U_PARTNER = "パートナー事業部";
 const monthly: PeriodPerf = {
   label: "2026年7月",
   note: "進行中（14日時点）",
-  totals: {
-    revenue: 43_000_000,
-    cost: 25_000_000,
-    target: 49_000_000,
-    revenueDelta: "+8.2%",
-    revenueTrend: "up",
-    profitDelta: "+12.4%",
-    profitTrend: "up",
-  },
+  totals: { revenue: 43_000_000, cost: 25_000_000, target: 49_000_000, revenueDelta: "+8.2%", revenueTrend: "up", profitDelta: "+12.4%", profitTrend: "up" },
   series: [
     { label: "2月", revenue: 31_500_000, cost: 21_800_000 },
     { label: "3月", revenue: 34_200_000, cost: 22_600_000 },
@@ -43,8 +34,7 @@ const monthly: PeriodPerf = {
     { label: "7月", revenue: 43_000_000, cost: 25_000_000 },
   ],
   units: [
-    { name: U_TEL, revenue: 24_000_000, cost: 13_000_000, target: 27_000_000, delta: "+6.1%", trend: "up" },
-    { name: U_CG, revenue: 9_000_000, cost: 4_800_000, target: 9_500_000, delta: "+11.8%", trend: "up" },
+    { name: U_TEL, revenue: 33_000_000, cost: 17_800_000, target: 36_500_000, delta: "+7.4%", trend: "up" },
     { name: U_CRM, revenue: 7_000_000, cost: 3_700_000, target: 8_000_000, delta: "+5.0%", trend: "up" },
     { name: U_PARTNER, revenue: 3_000_000, cost: 3_500_000, target: 4_500_000, delta: "-3.5%", trend: "down" },
   ],
@@ -53,15 +43,7 @@ const monthly: PeriodPerf = {
 const weeklyPerf: PeriodPerf = {
   label: "第28週",
   note: "7/7–7/13",
-  totals: {
-    revenue: 10_130_000,
-    cost: 5_980_000,
-    target: 11_310_000,
-    revenueDelta: "+3.4%",
-    revenueTrend: "up",
-    profitDelta: "+5.0%",
-    profitTrend: "up",
-  },
+  totals: { revenue: 10_130_000, cost: 5_980_000, target: 11_310_000, revenueDelta: "+3.4%", revenueTrend: "up", profitDelta: "+5.0%", profitTrend: "up" },
   series: [
     { label: "第22週", revenue: 8_900_000, cost: 5_600_000 },
     { label: "第23週", revenue: 9_100_000, cost: 5_650_000 },
@@ -72,8 +54,7 @@ const weeklyPerf: PeriodPerf = {
     { label: "第28週", revenue: 10_130_000, cost: 5_980_000 },
   ],
   units: [
-    { name: U_TEL, revenue: 5_650_000, cost: 3_050_000, target: 6_300_000, delta: "+2.9%", trend: "up" },
-    { name: U_CG, revenue: 2_120_000, cost: 1_130_000, target: 2_230_000, delta: "+4.6%", trend: "up" },
+    { name: U_TEL, revenue: 7_770_000, cost: 4_180_000, target: 8_530_000, delta: "+2.9%", trend: "up" },
     { name: U_CRM, revenue: 1_650_000, cost: 870_000, target: 1_850_000, delta: "+1.2%", trend: "up" },
     { name: U_PARTNER, revenue: 710_000, cost: 930_000, target: 930_000, delta: "-2.1%", trend: "down" },
   ],
@@ -82,15 +63,7 @@ const weeklyPerf: PeriodPerf = {
 const daily: PeriodPerf = {
   label: "2026-07-14",
   note: "本日（速報）",
-  totals: {
-    revenue: 2_040_000,
-    cost: 1_228_000,
-    target: 2_260_000,
-    revenueDelta: "+1.9%",
-    revenueTrend: "up",
-    profitDelta: "-0.8%",
-    profitTrend: "down",
-  },
+  totals: { revenue: 2_040_000, cost: 1_228_000, target: 2_260_000, revenueDelta: "+1.9%", revenueTrend: "up", profitDelta: "-0.8%", profitTrend: "down" },
   series: [
     { label: "7/8", revenue: 1_760_000, cost: 1_150_000 },
     { label: "7/9", revenue: 1_820_000, cost: 1_170_000 },
@@ -101,8 +74,7 @@ const daily: PeriodPerf = {
     { label: "7/14", revenue: 2_040_000, cost: 1_228_000 },
   ],
   units: [
-    { name: U_TEL, revenue: 1_140_000, cost: 615_000, target: 1_270_000, delta: "+2.2%", trend: "up" },
-    { name: U_CG, revenue: 430_000, cost: 228_000, target: 460_000, delta: "+0.9%", trend: "up" },
+    { name: U_TEL, revenue: 1_570_000, cost: 843_000, target: 1_730_000, delta: "+2.2%", trend: "up" },
     { name: U_CRM, revenue: 330_000, cost: 175_000, target: 380_000, delta: "0.0%", trend: "flat" },
     { name: U_PARTNER, revenue: 140_000, cost: 210_000, target: 150_000, delta: "-4.0%", trend: "down" },
   ],
@@ -121,13 +93,8 @@ const yojitsu: YojitsuMonitor = {
   units: [
     {
       name: U_TEL,
-      revenue: { plan: 27_000_000, actual: 10_600_000, forecast: 24_000_000 },
-      profit: { plan: 12_500_000, actual: 4_900_000, forecast: 11_000_000 },
-    },
-    {
-      name: U_CG,
-      revenue: { plan: 9_500_000, actual: 4_000_000, forecast: 9_000_000 },
-      profit: { plan: 4_500_000, actual: 1_850_000, forecast: 4_200_000 },
+      revenue: { plan: 36_500_000, actual: 14_600_000, forecast: 33_000_000 },
+      profit: { plan: 17_000_000, actual: 6_750_000, forecast: 15_200_000 },
     },
     {
       name: U_CRM,
@@ -170,9 +137,19 @@ const yojitsu: YojitsuMonitor = {
   ],
 };
 
-/* ── 週次予実（A3） ───────────────────────────────────── */
-// 木〜水を1週サイクル。売上=週次実績あり／コスト・営業利益=週次実績なし（計画・見込のみ）。
+/* ── カスタマーグロース部 活動KPI（A6） ────────────────── */
+const cgKpi: CgKpi = {
+  note: "売上は AIテレアポに内包（cg は既存顧客サポート部門）",
+  metrics: [
+    { label: "対応社数", value: "128社", delta: "+6", trend: "up" },
+    { label: "NRR（売上継続率）", value: "112%", delta: "+2pt", trend: "up" },
+    { label: "月次解約率", value: "1.8%", delta: "-0.3pt", trend: "up" },
+    { label: "アップセルARR", value: "480万/月", delta: "+40万", trend: "up" },
+    { label: "ヘルス緑比率", value: "72%", delta: "+3pt", trend: "up" },
+  ],
+};
 
+/* ── 週次予実（A3） ───────────────────────────────────── */
 const weekly: WeeklyMonitor = {
   unit: "全社",
   targetWeek: "2W（7/9(木)–7/15(水)・7日）進行中",
@@ -214,18 +191,14 @@ const weekly: WeeklyMonitor = {
 };
 
 /* ── 事業計画（A4・FY2026基準／他FYは倍率） ─────────────── */
-// 12ヶ月（3月〜2月）。FY2026 を実数、FY2027〜2030 は growth 倍率でページ側が算出。
-
 const M = (base: number, shape: number[]): number[] => shape.map((s) => Math.round((base * s) / 100));
-// 月次の季節配分（合計 ≒ base）。合計100。
 const SHAPE = [7, 8, 8, 8, 9, 9, 9, 9, 8, 9, 8, 8];
 
 const plan: PlanBook = {
   months: ["3月", "4月", "5月", "6月", "7月", "8月", "9月", "10月", "11月", "12月", "1月", "2月"],
   fiscals: ["FY2026", "FY2027", "FY2028", "FY2029", "FY2030"],
   base: [
-    { unit: U_TEL, revenue: M(324_000_000, SHAPE), cost: M(168_000_000, SHAPE) },
-    { unit: U_CG, revenue: M(114_000_000, SHAPE), cost: M(60_000_000, SHAPE) },
+    { unit: U_TEL, revenue: M(438_000_000, SHAPE), cost: M(228_000_000, SHAPE) }, // cg 内包
     { unit: U_CRM, revenue: M(96_000_000, SHAPE), cost: M(51_000_000, SHAPE) },
     { unit: U_PARTNER, revenue: M(54_000_000, SHAPE), cost: M(66_000_000, SHAPE) },
   ],
@@ -233,7 +206,6 @@ const plan: PlanBook = {
 };
 
 /* ── 改善リクエスト（A5） ─────────────────────────────── */
-
 const requests: ImprovementRequest[] = [
   { id: "REQ-142", title: "予実モニターに前年同月比を追加したい", source: "AIテレアポ事業部", category: "データ", status: "open", date: "2026-07-14" },
   { id: "REQ-141", title: "事業部別テーブルをCSVエクスポートしたい", source: "コーポレート", category: "データ", status: "open", date: "2026-07-13" },
@@ -259,6 +231,7 @@ export const snapshot: KeieiSnapshot = {
   weekly,
   plan,
   requests,
+  cgKpi,
   kgis: [
     { id: "authority", index: "①", tag: "権限移譲", title: "AI経営", definition: "全意思決定の平均権限レベル", value: 1.8, target: 5, unit: "L", note: "L0 人が決める → L5 AI全権" },
     { id: "autonomy", index: "②", tag: "状態", title: "AI業務実行", definition: "全タスクの自動実行・自動改善", value: null, target: null, unit: null, note: "③の延長で到達" },
