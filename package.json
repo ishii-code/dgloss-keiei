@@ -1,6 +1,6 @@
 {
   "name": "dgloss-keiei",
-  "version": "1.6.0",
+  "version": "1.7.0",
   "private": true,
   "description": "dgloss OS v2.0 経営ダッシュボード — KGI・メタKPI・権限レベルの俯瞰",
   "scripts": {

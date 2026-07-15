@@ -1,3 +1,10 @@
+# [1.7.0](https://github.com/ishii-code/dgloss-keiei/compare/v1.6.0...v1.7.0) (2026-07-15)
+
+
+### Features
+
+* cgを活動KPIとして分離(売上はAIテレアポ内包)・予実は3事業部 ([81cc348](https://github.com/ishii-code/dgloss-keiei/commit/81cc348139fc353a797fd5dd807937eddec7b011))
+
 # [1.6.0](https://github.com/ishii-code/dgloss-keiei/compare/v1.5.0...v1.6.0) (2026-07-15)
 
 
