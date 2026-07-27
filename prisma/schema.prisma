@@ -36,3 +36,17 @@ model MonthlyFinancial {
 
   @@unique([unitId, fiscalYear, month])
 }
+
+/// カスタマーグロース部（cg）活動KPIのスナップショット。
+/// cg は売上を持たない（AIテレアポに内包）ため、活動KPI（NRR/対応社数/解約率 等）を
+/// dgloss-cg の KPI エクスポートAPIから取り込み、最新スナップショットを保持する。
+/// metrics は CgMetric[]（{label,value,delta?,trend?}）を JSON で保持。
+model CgKpiSnapshot {
+  id        Int      @id @default(autoincrement())
+  note      String   @default("")
+  metrics   Json     // CgMetric[]
+  source    String   @default("cg-api")
+  fetchedAt DateTime @default(now())
+
+  @@index([fetchedAt])
+}

@@ -8,7 +8,7 @@
 import { cache } from "react";
 import { DB_ENABLED, prisma } from "@/lib/db";
 import { snapshot } from "@/data/keiei";
-import type { KeieiSnapshot, PlanBook, PlanRow, Yojitsu, YojitsuMonitor, YojitsuPoint } from "@/types";
+import type { CgKpi, CgMetric, KeieiSnapshot, PlanBook, PlanRow, Yojitsu, YojitsuMonitor, YojitsuPoint } from "@/types";
 
 /** 会計期の月順（3月開始→翌2月）。 */
 const MONTH_ORDER = [3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 1, 2];
@@ -93,6 +93,16 @@ function buildPlan(rows: UnitRow[]): PlanBook {
   return { ...snapshot.plan, base };
 }
 
+/** cg 活動KPI の最新スナップショット（無ければ静的 snapshot.cgKpi）。 */
+async function latestCgKpi(): Promise<CgKpi> {
+  if (!prisma) return snapshot.cgKpi;
+  const snap = await prisma.cgKpiSnapshot.findFirst({ orderBy: { fetchedAt: "desc" } });
+  if (!snap) return snapshot.cgKpi;
+  const metrics = Array.isArray(snap.metrics) ? (snap.metrics as unknown as CgMetric[]) : [];
+  if (metrics.length === 0) return snapshot.cgKpi;
+  return { note: snap.note, metrics };
+}
+
 /** ダッシュボード全体（財務は DB、非財務は snapshot）。DB 無効/未seed はモック。 */
 export const getDashboardData = cache(async (): Promise<KeieiSnapshot> => {
   if (!DB_ENABLED || !prisma) return snapshot;
@@ -115,7 +125,8 @@ export const getDashboardData = cache(async (): Promise<KeieiSnapshot> => {
       })),
     }));
 
-    return { ...snapshot, yojitsu: buildYojitsu(rows), plan: buildPlan(rows) };
+    const cgKpi = await latestCgKpi();
+    return { ...snapshot, yojitsu: buildYojitsu(rows), plan: buildPlan(rows), cgKpi };
   } catch (e) {
     // DB 接続失敗時はクラッシュさせずモックへフォールバック。
     console.error("[getDashboardData] DB読取失敗、モックにフォールバック:", e);
