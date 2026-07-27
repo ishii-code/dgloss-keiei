@@ -8,7 +8,16 @@
 import { cache } from "react";
 import { DB_ENABLED, prisma } from "@/lib/db";
 import { snapshot } from "@/data/keiei";
-import type { CgKpi, CgMetric, KeieiSnapshot, PlanBook, PlanRow, Yojitsu, YojitsuMonitor, YojitsuPoint } from "@/types";
+import type {
+  CgKpi,
+  CgMetric,
+  KeieiSnapshot,
+  PlanBook,
+  PlanRow,
+  Yojitsu,
+  YojitsuMonitor,
+  YojitsuPoint,
+} from "@/types";
 
 /** 会計期の月順（3月開始→翌2月）。 */
 const MONTH_ORDER = [3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 1, 2];
